@@ -1,0 +1,28 @@
+# ignoruj foldery budowania i pliki binarne
+build/
+out/
+bin/
+
+# ignoruj lokalną konfigurację i cache Gradle'a
+.gradle/
+
+# ignoruj ustawienia środowisk programistycznych
+.idea/
+*.iml
+.vscode/
+.project
+.settings/
+.classpath
+
+# ignoruj pliki systemowe i logi
+*.log
+Thumbs.db
+
+# ignoruj pliki Dockera (nie są potrzebne wewnątrz obrazu)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ignoruj foldery Git
+.git
+.gitignore

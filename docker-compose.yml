@@ -1,0 +1,59 @@
+# opcjonalne, tylko dla kompatybilności ze starszymi wersjami
+#version: '3.8'
+
+services:
+  # serwis bazy danych PostgreSQL
+  db:
+    image: postgres:17
+    container_name: project-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: projects
+    ports:
+      - "5432:5432" # udostępnienie portu bazy, aby można było się do niej podpiąć np. z pgAdmin
+    volumes:
+      - postgres_data:/var/lib/postgresql # wolumen, aby dane nie zniknęły po restarcie kontenera (postgres_data)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # serwis naszej aplikacji w Spring Boot WebFlux
+  app:
+    build: . # kropka wskazuje na budowanie obrazu z pliku Dockerfile w tym samym katalogu
+    container_name: project-app
+    ports:
+      - "8081:8080" # mapowanie portu aplikacji webowej
+    environment:
+      # nadpisywanie wybranych parametrów application.properties:
+      # zamiast 'localhost' używamy 'db'
+      SPRING_R2DBC_URL: r2dbc:postgresql://db:5432/projects
+    depends_on:
+      db:
+        condition: service_healthy # aplikacja poczeka ze startem, aż baza będzie gotowa
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:Z
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data: # zarezerwuj miejsce na dysku o nazwie postgres_data
+  grafana_data:
