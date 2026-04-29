@@ -28,7 +28,7 @@ public class DataInitializer {
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
 
-        // czyszczenie starych danych z zachowaniem kolejności ze względu na klucze obce
+        // czyszczenie starych danych
         Mono<Void> cleanup = zadanieService.deleteAll()
                 .then(projectService.deleteAll())
                 .then(studentService.deleteAll());

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Repository
 public interface ProjectRepository extends ReactiveCrudRepository<Projekt, Integer> {
 
-    @Query("SELECT * FROM projekt nazwa ILIKE '%' || :nazwa || '%'")
+    @Query("SELECT * FROM projekt where nazwa ILIKE '%' || :nazwa || '%'")
     Flux<Projekt> findByNazwaContains(String nazwa);
 
     @Query("UPDATE projekt SET data_oddania = :dataOddania")

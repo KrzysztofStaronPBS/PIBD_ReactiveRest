@@ -26,7 +26,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Flux<Projekt> findAll() {
-        return projectRepository.findAll().delayElements(Duration.ofMillis(100));
+        return projectRepository.findAll().delayElements(Duration.ofMillis(200));
     }
 
     @Override
